@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KubeGlide</title>
+    <!-- Load Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Use the Inter font family */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for log windows */
+        .log-window::-webkit-scrollbar {
+            width: 6px;
+        }
+        .log-window::-webkit-scrollbar-thumb {
+            background-color: #9ca3af; /* gray-400 */
+            border-radius: 3px;
+        }
+        .log-window::-webkit-scrollbar-track {
+            background-color: #f3f4f6; /* gray-100 */
+        }
+        /* Ensure inputs are responsive */
+        input[type="text"], input[type="number"], select {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-900 antialiased">
+
+    <div class="container mx-auto max-w-7xl p-4 sm:p-6 lg:p-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-blue-700">KubeGlide</h1>
+            <p class="text-lg text-gray-600 mt-1">Simulating a developer-centric K8s platform to solve key pain points.</p>
+        </header>
+
+        <!-- Main grid for the dashboard -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- ============================================= -->
+            <!-- FEATURE 1: Developer-Centric Abstraction      -->
+            <!-- ============================================= -->
+            <div class="bg-white p-6 rounded-lg shadow-lg col-span-1">
+                <h2 class="text-xl font-semibold mb-4 border-b pb-2">1. Application Deployment Blueprint</h2>
+                <form id="deploy-form" class="space-y-4">
+                    <div>
+                        <label for="app-name" class="block text-sm font-medium text-gray-700">App Name</label>
+                        <input type="text" id="app-name" value="my-web-app" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="container-image" class="block text-sm font-medium text-gray-700">Container Image</label>
+                        <input type="text" id="container-image" value="nginx:latest" placeholder="e.g., my-app:secure" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="replicas" class="block text-sm font-medium text-gray-700">Replicas</label>
+                        <input type="number" id="replicas" value="1" min="1" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label for="environment" class="block text-sm font-medium text-gray-700">Environment</label>
+                        <select id="environment" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                            <option>Staging</option>
+                            <option>Production</option>
+                        </select>
+                    </div>
+                    <button type="button" id="deploy-button" class="w-full inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Generate & Deploy Configuration
+                    </button>
+                </form>
+            </div>
+
+            <!-- ============================================= -->
+            <!-- FEATURES 1 (Output) & 2 (Policy)              -->
+            <!-- ============================================= -->
+            <div class="space-y-6 col-span-1">
+                <!-- Feature 2: Policy Check Status -->
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h2 class="text-xl font-semibold mb-4 border-b pb-2">2. Policy Check Status</h2>
+                    <div id="policy-status" class="p-4 rounded-md border-2 border-gray-300 bg-gray-50 min-h-[80px]">
+                        <p class="text-gray-500">Awaiting configuration...</p>
+                    </div>
+                </div>
+
+                <!-- Feature 1: Configuration Output -->
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h2 class="text-xl font-semibold mb-4 border-b pb-2">Simulated K8s Configuration</h2>
+                    <pre id="config-output" class="log-window bg-gray-900 text-white text-xs p-4 rounded-md overflow-auto h-80">// Configuration output will appear here...</pre>
+                </div>
+            </div>
+
+            <!-- ============================================= -->
+            <!-- FEATURE 3: Visibility & FinOps                -->
+            <!-- ============================================= -->
+            <div class="space-y-6 col-span-1">
+                <!-- Feature 3: FinOps -->
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h2 class="text-xl font-semibold mb-4 border-b pb-2">3. FinOps Cost Monitoring</h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Est. Monthly Workload Cost:</span>
+                            <span id="workload-cost" class="text-lg font-bold text-blue-700">$0.00</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">Est. Node Overhead Cost:</span>
+                            <span class="text-lg font-bold text-gray-900">$50.00</span>
+                        </div>
+                        <p class="text-xs text-gray-500 pt-2 border-t mt-3">Workload cost is simulated at $150/replica. Overhead is a fixed cost.</p>
+                    </div>
+                </div>
+                
+                <!-- Feature 3: Logs -->
+                <div class="bg-white p-6 rounded-lg shadow-lg">
+                    <h2 class="text-xl font-semibold mb-4 border-b pb-2">Deployment & Runtime Logs</h2>
+                    <div id="log-window" class="log-window bg-gray-900 p-4 rounded-md overflow-auto h-[294px] space-y-1">
+                        <p class="font-mono text-sm text-gray-400">[INFO] System initialized. Waiting for deployment...</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Get all DOM elements
+            const deployButton = document.getElementById('deploy-button');
+            
+            // Form Inputs
+            const appNameInput = document.getElementById('app-name');
+            const imageInput = document.getElementById('container-image');
+            const replicasInput = document.getElementById('replicas');
+            const envInput = document.getElementById('environment');
+
+            // Output Panels
+            const policyStatusEl = document.getElementById('policy-status');
+            const configOutputEl = document.getElementById('config-output');
+            const workloadCostEl = document.getElementById('workload-cost');
+            const logWindowEl = document.getElementById('log-window');
+
+            // Main function on button click
+            deployButton.addEventListener('click', () => {
+                // 1. Get all input values
+                const appName = appNameInput.value || 'unnamed-app';
+                const image = imageInput.value;
+                const replicas = parseInt(replicasInput.value, 10);
+                const environment = envInput.value;
+
+                let policyErrors = [];
+                let logMessages = [];
+
+                // Clear previous outputs
+                policyStatusEl.innerHTML = '';
+                logWindowEl.innerHTML = '';
+                configOutputEl.textContent = '';
+                
+                logMessages.push('[INFO] Received deployment request. Running policy checks...');
+
+                // =============================================
+                // 2. FEATURE 2: Policy & Security Enforcement
+                // =============================================
+                
+                // Policy A: Production Replicas
+                if (environment === 'Production' && replicas < 3) {
+                    const errorMsg = 'Policy A Failed: Production environments require at least 3 replicas.';
+                    policyErrors.push(errorMsg);
+                    logMessages.push(`[ERROR] ${errorMsg}`);
+                }
+
+                // Policy B: Secure Image Tag
+                if (!image.includes(':secure')) {
+                    const errorMsg = 'Policy B Failed: Image must use a ":secure" tag (simulating a vulnerability scan pass).';
+                    policyErrors.push(errorMsg);
+                    logMessages.push(`[WARNING] ${errorMsg}`);
+                    logMessages.push('[WARNING] ImagePullBackOff probable due to missing :secure tag.');
+                }
+
+                // Update Policy Status UI
+                if (policyErrors.length > 0) {
+                    policyStatusEl.innerHTML = policyErrors.map(err => `<p class="text-red-600 font-medium">${err}</p>`).join('');
+                    policyStatusEl.className = 'p-4 rounded-md border-2 border-red-400 bg-red-50 min-h-[80px]';
+                } else {
+                    policyStatusEl.innerHTML = '<p class="text-green-700 font-medium">Policy Check Passed: Configuration approved for deployment.</p>';
+                    policyStatusEl.className = 'p-4 rounded-md border-2 border-green-400 bg-green-50 min-h-[80px]';
+                    logMessages.push('[INFO] All policy checks passed.');
+                }
+
+                // =============================================
+                // 3. FEATURE 1: Configuration Generation
+                // =============================================
+
+                if (policyErrors.length === 0) {
+                    // Policies passed, generate mock config
+                    const mockConfig = `
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${appName}
+  labels:
+    app: ${appName}
+    env: ${environment.toLowerCase()}
+spec:
+  replicas: ${replicas}
+  selector:
+    matchLabels:
+      app: ${appName}
+  template:
+    metadata:
+      labels:
+        app: ${appName}
+    spec:
+      containers:
+      - name: ${appName}-container
+        image: ${image}
+        ports:
+        - containerPort: 80
+`;
+                    configOutputEl.textContent = mockConfig.trim();
+                    logMessages.push(`[INFO] Generating configuration for '${appName}'.`);
+                    logMessages.push(`[INFO] Simulating deployment for '${appName}'...`);
+                    logMessages.push(`[SUCCESS] Application '${appName}' is now running with ${replicas} replica(s).`);
+
+                } else {
+                    // Policies failed
+                    configOutputEl.textContent = '// Configuration generation halted due to policy failures.';
+                    logMessages.push('[ERROR] Deployment aborted. See policy status.');
+                }
+
+                // =============================================
+                // 4. FEATURE 3: FinOps & Logging
+                // =============================================
+                
+                // Update Cost
+                const workloadCost = (replicas || 0) * 150;
+                workloadCostEl.textContent = `$${workloadCost.toFixed(2)}`;
+
+                // Update Log Window
+                logWindowEl.innerHTML = logMessages.map(msg => {
+                    let colorClass = 'text-gray-300';
+                    if (msg.startsWith('[ERROR]')) colorClass = 'text-red-400';
+                    if (msg.startsWith('[WARNING]')) colorClass = 'text-yellow-400';
+                    if (msg.startsWith('[SUCCESS]')) colorClass = 'text-green-400';
+                    if (msg.startsWith('[INFO]')) colorClass = 'text-blue-300';
+                    
+                    return `<p class="font-mono text-sm ${colorClass}">${msg}</p>`;
+                }).join('');
+            });
+
+            // Trigger an initial run to populate the UI
+            deployButton.click();
+        });
+    </script>
+</body>
+</html>
+
